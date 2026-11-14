@@ -4,6 +4,7 @@ const APP_FILES = [
   "./index.html",
   "./styles.css",
   "./app.js",
+  "./supabase-config.js",
   "./manifest.webmanifest",
   "./file_000000001de482118f97ed13eb144a86.png"
 ];
