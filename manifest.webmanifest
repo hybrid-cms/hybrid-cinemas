@@ -1,0 +1,19 @@
+{
+  "name": "HYBRID CINEMAS",
+  "short_name": "HYBRID",
+  "description": "Your world of cinema.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#070607",
+  "theme_color": "#090909",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "file_000000001de482118f97ed13eb144a86.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
