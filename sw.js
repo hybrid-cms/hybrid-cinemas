@@ -1,4 +1,4 @@
-const CACHE_NAME = "hybrid-cinemas-v1";
+const CACHE_NAME = "hybrid-cinemas-v2";
 const APP_FILES = [
   "./",
   "./index.html",
