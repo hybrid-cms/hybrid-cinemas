@@ -5,7 +5,7 @@ function esc(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&l
 async function start(){
  const id=new URLSearchParams(location.search).get("id");
  if(!id){root.textContent="Movie ID missing.";return}
- const {data:m,error}=await db.from("movies").select("id,title,language,release_year,genre,poster_url,watch_url,description,episodes,episodes_jsonb,published").eq("id",id).eq("published",true).maybeSingle();
+ const {data:m,error}=await db.from("movies").select("*").eq("id",id).eq("published",true).maybeSingle();
  if(error||!m){root.textContent="Movie not found.";return}
  document.title=m.title+" — HYBRID CINEMAS";
  const poster=safe(m.poster_url),download=safe(m.watch_url);
