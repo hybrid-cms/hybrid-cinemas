@@ -11,3 +11,18 @@
 .detail-episodes{margin-top:25px}.detail-episodes h2{font:500 24px 'Playfair Display',serif;color:var(--gold2)}
 .detail-back{display:inline-block;margin-bottom:18px;color:var(--gold)}.detail-error{padding:40px;text-align:center;color:#cdb98f}
 @media(max-width:700px){.detail-card{grid-template-columns:1fr;padding:18px}.detail-poster{max-height:420px;object-fit:contain}}
+
+.request-section{max-width:900px;margin:0 auto 70px;padding:35px 7vw;background:#111;border:1px solid #493b27}
+.request-heading h2{font:500 clamp(28px,4vw,40px) 'Playfair Display',serif;color:#f2d28c;margin:5px 0}
+.request-heading h2 em{color:#d71927}
+.request-heading p:not(.eyebrow){color:#aaa;font-size:13px}
+.request-form{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px}
+.request-form label{display:grid;gap:7px;color:var(--muted);font-size:11px}
+.request-form input,.request-form select,.request-form textarea,.request-admin-actions select{width:100%;background:#080808;border:1px solid #393127;padding:13px;color:#eee;font:inherit}
+.request-form label:nth-of-type(3),.request-form label:nth-of-type(4),.request-form button,.request-form #requestStatus{grid-column:1/-1}
+.request-form textarea{resize:vertical}
+.request-admin-row{display:flex;justify-content:space-between;align-items:center;gap:18px;background:#191714;border:1px solid #2b261e;padding:14px}
+.request-admin-row p{font-size:11px;color:var(--muted);margin:6px 0 0}
+.request-admin-row .request-message{color:#d0c3a9}
+.request-admin-actions{display:flex;gap:8px;align-items:center;min-width:220px}
+@media(max-width:650px){.request-form{grid-template-columns:1fr}.request-form label,.request-form button,.request-form #requestStatus{grid-column:auto}.request-admin-row{align-items:flex-start;flex-direction:column}.request-admin-actions{width:100%;min-width:0}.request-admin-actions select{flex:1}}
