@@ -3,7 +3,7 @@ const $=id=>document.getElementById(id);
 let currentUser=null;
 function esc(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function status(message){$("saveStatus").textContent=message}
-function showAdmin(){ $("loginView").classList.add("hidden");$("adminView").classList.remove("hidden");renderList() }
+function showAdmin(){ $("loginView").classList.add("hidden");$("adminView").classList.remove("hidden");renderList();renderRequests() }
 function showLogin(message=""){ $("adminView").classList.add("hidden");$("loginView").classList.remove("hidden");$("loginError").textContent=message }
 async function signIn(e){e.preventDefault();$("loginError").textContent="Signing in…";const {data,error}=await client.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});if(error){showLogin(error.message);return}currentUser=data.user;showAdmin()}
 $("loginForm").addEventListener("submit",signIn);
@@ -21,6 +21,17 @@ function filterAdminMovies(){
  $("movieSearchCount").textContent=q?`Showing ${filtered.length} of ${adminMovies.length} movies`:`${adminMovies.length} movies in library`;
  list.querySelectorAll("[data-edit]").forEach(b=>b.addEventListener("click",()=>editMovie(b.dataset.edit)));
  list.querySelectorAll("[data-delete]").forEach(b=>b.addEventListener("click",()=>deleteMovie(b.dataset.delete)));
+}
+
+async function renderRequests(){
+ const box=$("requestList");if(!box||!currentUser)return;
+ box.innerHTML="<p class='warning'>Loading requests…</p>";
+ const {data,error}=await client.from("movie_requests").select("*").order("created_at",{ascending:false});
+ if(error){box.innerHTML=`<p class="warning">${esc(error.message)}. Run supabase-movie-requests.sql in Supabase SQL Editor.</p>`;return}
+ if(!data?.length){box.innerHTML="<p class='warning'>No movie requests yet.</p>";return}
+ box.innerHTML=data.map(r=>`<article class="request-admin-row"><div><strong>${esc(r.movie_title)}</strong><p>${esc(r.language)} · ${esc(r.requester_name||"Anonymous")} · ${new Date(r.created_at).toLocaleString()}</p>${r.message?`<p class="request-message">${esc(r.message)}</p>`:""}</div><div class="request-admin-actions"><select data-request-status="${r.id}" aria-label="Request status"><option ${r.status==="Pending"?"selected":""}>Pending</option><option ${r.status==="Reviewed"?"selected":""}>Reviewed</option><option ${r.status==="Added"?"selected":""}>Added</option><option ${r.status==="Unavailable"?"selected":""}>Unavailable</option></select><button class="plain-btn secondary" data-request-delete="${r.id}" type="button">Delete</button></div></article>`).join("");
+ box.querySelectorAll("[data-request-status]").forEach(s=>s.addEventListener("change",async()=>{const {error}=await client.from("movie_requests").update({status:s.value}).eq("id",s.dataset.requestStatus);if(error){alert("Could not update request: "+error.message);renderRequests()}}));
+ box.querySelectorAll("[data-request-delete]").forEach(b=>b.addEventListener("click",async()=>{if(!confirm("Delete this movie request?"))return;const {error}=await client.from("movie_requests").delete().eq("id",b.dataset.requestDelete);if(error){alert("Could not delete request: "+error.message);return}renderRequests()}));
 }
 async function renderList(){
  const list=$("adminList");if(!list||!currentUser)return;
