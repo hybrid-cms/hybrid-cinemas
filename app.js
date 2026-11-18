@@ -17,6 +17,7 @@ requestForm?.addEventListener("submit",async e=>{
  status.textContent="Submitting request…";
  const {error}=await client.from("movie_requests").insert({
   movie_title:title,
+  release_year:Number(document.getElementById("requestYear").value),
   language:document.getElementById("requestLanguage").value,
   requester_name:document.getElementById("requestName").value.trim()||null,
   message:document.getElementById("requestMessage").value.trim()||null
