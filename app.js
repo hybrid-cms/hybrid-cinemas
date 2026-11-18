@@ -7,3 +7,21 @@ function render(){const grid=document.getElementById("movieGrid");if(!grid)retur
 function showMovie(id){const m=movieCache.find(x=>String(x.id)===decodeURIComponent(id));if(!m)return;const v=safeUrl(m.videoUrl||"");const seasons=[...new Set(m.episodes.map(e=>e.season||"Episodes"))];const episodeHtml=m.episodes.length?seasons.map(season=>`<section class="episode-season"><h3>${escapeHtml(season)}</h3>${m.episodes.filter(e=>(e.season||"Episodes")===season).map(e=>{const url=safeUrl(e.url||"");return url?`<a class="episode-link" href="${url}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(e.title||"Episode")}</span><b>WATCH ↗</b></a>`:`<p class="warning">Invalid episode link: ${escapeHtml(e.title||"Episode")}</p>`}).join("")}</section>`).join(""):"";document.getElementById("modalContent").innerHTML=`<p class="eyebrow">${escapeHtml(m.language)} · ${escapeHtml(m.year||"")}</p><h2>${escapeHtml(m.title)}</h2><p>${escapeHtml(m.description||"")}</p>${v?`<a class="watch-link" href="${v}" target="_blank" rel="noopener noreferrer">WATCH MOVIE ↗</a>`:""}${episodeHtml}${!v&&!m.episodes.length?`<p class="warning">A verified, authorized viewing link has not been added yet.</p>`:""}`;document.getElementById("movieModal").classList.remove("hidden")}
 function closeMovie(){document.getElementById("movieModal")?.classList.add("hidden")}
 document.addEventListener("DOMContentLoaded",()=>{document.getElementById("year").textContent=new Date().getFullYear();document.getElementById("search")?.addEventListener("input",render);document.querySelectorAll(".filter").forEach(b=>b.addEventListener("click",()=>{document.querySelector(".filter.active")?.classList.remove("active");b.classList.add("active");render()}));document.getElementById("movieModal")?.addEventListener("click",e=>{if(e.target.id==="movieModal")closeMovie()});loadMovies()});
+
+const requestForm=document.getElementById("requestForm");
+requestForm?.addEventListener("submit",async e=>{
+ e.preventDefault();
+ const status=document.getElementById("requestStatus");
+ const title=document.getElementById("requestTitle").value.trim();
+ if(!title){status.textContent="Please enter a movie name.";return}
+ status.textContent="Submitting request…";
+ const {error}=await client.from("movie_requests").insert({
+  movie_title:title,
+  language:document.getElementById("requestLanguage").value,
+  requester_name:document.getElementById("requestName").value.trim()||null,
+  message:document.getElementById("requestMessage").value.trim()||null
+ });
+ if(error){console.error("Movie request error:",error);status.textContent="Could not submit right now. Please try again later.";return}
+ requestForm.reset();
+ status.textContent="Request submitted! Thank you for your suggestion.";
+});
