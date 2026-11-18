@@ -7,7 +7,22 @@ async function start(){
  if(!id){root.textContent="Movie ID missing.";return}
  const {data:m,error}=await db.from("movies").select("*").eq("id",id).eq("published",true).maybeSingle();
  if(error||!m){root.textContent="Movie not found.";return}
- document.title=m.title+" — HYBRID CINEMAS";
+ const pageTitle=m.title+" ("+(m.release_year||"Movie")+") | HYBRID CINEMAS";
+ const pageDescription=(m.description||("Explore "+m.title+" movie details on HYBRID CINEMAS.")).replace(/\s+/g," ").slice(0,300);
+ document.title=pageTitle;
+ const canonical=location.origin+location.pathname+"?id="+encodeURIComponent(m.id);
+ const setMeta=(selector,attr,value)=>{
+  let el=document.head.querySelector(selector);
+  if(!el){el=document.createElement("meta");const parts=selector.match(/\[(name|property)="([^"]+)"\]/);if(parts)el.setAttribute(parts[1],parts[2]);document.head.appendChild(el)}
+  el.setAttribute(attr,value);
+ };
+ setMeta('meta[name="description"]',"content",pageDescription);
+ setMeta('meta[property="og:title"]',"content",pageTitle);
+ setMeta('meta[property="og:description"]',"content",pageDescription);
+ setMeta('meta[property="og:url"]',"content",canonical);
+ const canonicalLink=document.querySelector('link[rel="canonical"]');
+ if(canonicalLink)canonicalLink.href=canonical;
+
  const poster=safe(m.poster_url),download=safe(m.watch_url);
  const episodes=Array.isArray(m.episodes_jsonb)&&m.episodes_jsonb.length?m.episodes_jsonb:(Array.isArray(m.episodes)?m.episodes:[]);
  let ep="";
